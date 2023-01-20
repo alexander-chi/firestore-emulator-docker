@@ -1,18 +1,24 @@
-ARG GCLOUD_SDK_VERSION=335.0.0-alpine
 
-FROM google/cloud-sdk:$GCLOUD_SDK_VERSION
-LABEL maintainer="Michael Lynch <michael@mtlynch.io>"
+FROM node:18-bullseye
+
+LABEL maintainer="Alex Chi <alex.chi@me.com>"
 
 # Install Java 8 JRE (required for Firestore emulator).
-RUN apk add --update --no-cache openjdk8-jre
+RUN apt-get update
+RUN apt-get -y install openjdk-11-jre-headless
+RUN apt-get install unzip
 
 # Install Firestore Emulator.
-RUN gcloud components install cloud-firestore-emulator beta --quiet
+RUN npm i -g firebase-tools
 
 COPY entrypoint.sh .
+COPY firebase.json .
 
-ENV PORT 8080
-EXPOSE "$PORT"
+RUN firebase setup:emulators:firestore
+RUN firebase setup:emulators:ui
+
+EXPOSE 8080
+EXPOSE 8081
 
 ENV FIRESTORE_PROJECT_ID "dummy-firestore-id"
 

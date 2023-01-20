@@ -7,7 +7,6 @@ set -x
 
 IMAGE_NAME="firestore-emulator"
 CONTAINER_NAME="firestore-emulator"
-PORT="8080"
 FIRESTORE_PROJECT_ID="dummy-project-id"
 
 docker version
@@ -19,15 +18,12 @@ docker build \
   --tag "$IMAGE_NAME" \
   .
 
-docker run \
-  --name "$CONTAINER_NAME" \
-  --detach \
-  --env "FIRESTORE_PROJECT_ID=${FIRESTORE_PROJECT_ID}" \
-  --env "PORT=${PORT}" \
-  --publish "${PORT}:${PORT}" \
-  "$IMAGE_NAME"
+#docker run \
+#  --name "$CONTAINER_NAME" \
+#  --detach \
+#  --env "FIRESTORE_PROJECT_ID=${FIRESTORE_PROJECT_ID}" \
+#  --publish "8080:8080" \
+#  --publish "8081:8081" \
+#  -v data:/data \
+#  "$IMAGE_NAME"
 
-# Basic test to see if the emulator started.
-wget -qO- "http://localhost:${PORT}/v1/projects/${FIRESTORE_PROJECT_ID}/databases/(default)/documents/dummy-document"
-
-docker rm -f "$CONTAINER_NAME"
